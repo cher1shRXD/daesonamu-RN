@@ -28,12 +28,25 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="board"
         options={{
+          unmountOnBlur: true,
           tabBarShowLabel: false,
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
               name={focused ? "chatbox-ellipses" : "chatbox-ellipses-outline"}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="write"
+        options={{
+          tabBarShowLabel: false,
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon
+              name={focused ? "create" : "create-outline"}
               color={color}
             />
           ),

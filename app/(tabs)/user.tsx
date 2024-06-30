@@ -13,14 +13,21 @@ import {
 } from "react-native";
 import * as Crypto from "expo-crypto";
 import { ThemedText } from "@/components/ThemedText";
-import { DarkTheme, DefaultTheme } from "@react-navigation/native";
+import userStore from "@/store/userStore";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export default function HomeScreen() {
   const [id, setId] = useState<string>("");
   const [pw, setPw] = useState<string>("");
-  const [loading,setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  
 
   const themeColor = useColorScheme();
+
+  const setUserId = userStore((state) => state.setUserId);
+  const storedStId = userStore((state) => state.stId);
+  const setStId = userStore((state) => state.setStId);
+  const clearUserId = userStore((state) => state.clearUserId);
 
   const changeId = (text: string) => {
     setId(text);
@@ -37,25 +44,27 @@ export default function HomeScreen() {
         Crypto.CryptoDigestAlgorithm.SHA256,
         String(pw)
       );
-      await axios.post('https://daesonamu.kro.kr/api/login',{
-        stId:id,
-        password
-      }).then(
-        response=>{
-          if(response.status==200) {
-            Alert.alert('로그인 성공');
+      await axios
+        .post("https://daesonamu.kro.kr/api/login", {
+          stId: id,
+          password,
+        })
+        .then((response) => {
+          if (response.status == 200) {
+            Alert.alert("로그인 성공");
+            setUserId(response.data.data.id);
+            setStId(response.data.data.stId)
           }
-        }
-      ).catch(
-        err=>{
-          if(err.response.status == 401) {
-            Alert.alert('비밀번호가 틀립니다.');
+        })
+        .catch((err) => {
+          console.log(err);
+          if (err.response.status == 401) {
+            Alert.alert("비밀번호가 틀립니다.");
           }
-          if(err.response.status == 404) {
-            Alert.alert('존재하지 않는 회원입니다.');
+          if (err.response.status == 404) {
+            Alert.alert("존재하지 않는 회원입니다.");
           }
-        }
-      )
+        });
     } else {
       Alert.alert("모든 입력창을 모두 입력해주세요.");
     }
@@ -64,39 +73,55 @@ export default function HomeScreen() {
 
   return (
     <Pressable style={{ flex: 1 }} onPress={() => Keyboard.dismiss()}>
-      <ThemedView style={styles.container}>
-        <ThemedText style={styles.title}>로그인하기</ThemedText>
-        <TextInput
-          onChangeText={changeId}
-          value={id}
-          placeholder="아이디"
-          style={[
-            styles.input,
-            themeColor == "dark" ? styles.darkText : styles.brightText,
-          ]}
-          textContentType="username"
-        />
-        <TextInput
-          onChangeText={changePw}
-          value={pw}
-          placeholder="비밀번호"
-          style={
-            [styles.input,
-            themeColor == "dark" ? styles.darkText : styles.brightText]
-          }
-          secureTextEntry
-          textContentType="password"
-        />
-        <TouchableOpacity
-          onPress={submit}
-          style={loading ? styles.disalbedBtn : styles.button}
-          disabled={loading}
-        >
-          <Text style={styles.buttonText}>
-            {loading ? "로그인중..." : "로그인"}
-          </Text>
-        </TouchableOpacity>
-      </ThemedView>
+      {storedStId == null ? (
+        <ThemedView style={styles.container}>
+          <ThemedText style={styles.title}>로그인하기</ThemedText>
+          <KeyboardAwareScrollView>
+            <TextInput
+              onChangeText={changeId}
+              value={id}
+              placeholder="아이디"
+              placeholderTextColor="gray"
+              style={[
+                styles.input,
+                themeColor == "dark" ? styles.darkText : styles.brightText,
+              ]}
+              textContentType="username"
+            />
+            <TextInput
+              onChangeText={changePw}
+              value={pw}
+              placeholder="비밀번호"
+              placeholderTextColor="gray"
+              style={[
+                styles.input,
+                themeColor == "dark" ? styles.darkText : styles.brightText,
+              ]}
+              secureTextEntry
+              textContentType="password"
+            />
+          </KeyboardAwareScrollView>
+          <TouchableOpacity
+            onPress={submit}
+            style={loading ? styles.disabledBtn : styles.button}
+            disabled={loading}
+          >
+            <Text style={styles.buttonText}>
+              {loading ? "로그인중..." : "로그인"}
+            </Text>
+          </TouchableOpacity>
+        </ThemedView>
+      ) : (
+        <ThemedView style={styles.container}>
+          <ThemedText style={styles.title}>마이페이지</ThemedText>
+          <ThemedText style={styles.userIdText}>
+            나의 학번: {storedStId}
+          </ThemedText>
+          <TouchableOpacity onPress={clearUserId} style={styles.button}>
+            <Text style={styles.buttonText}>로그아웃</Text>
+          </TouchableOpacity>
+        </ThemedView>
+      )}
     </Pressable>
   );
 }
@@ -107,7 +132,7 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "flex-start",
     alignItems: "center",
-    paddingTop: 70,
+    paddingTop: 50,
     position: "relative",
   },
   input: {
@@ -130,7 +155,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 10,
   },
-  disalbedBtn: {
+  disabledBtn: {
     width: 300,
     height: 50,
     backgroundColor: "rgb(10,150,255)",
@@ -150,11 +175,16 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     marginLeft: 15,
     marginBottom: 20,
+    paddingVertical: 5,
   },
-  darkText : {
-    color:'white'
+  userIdText: {
+    fontSize: 20,
+    marginTop: 20,
   },
-  brightText : {
-    color:'black'
-  }
+  darkText: {
+    color: "white",
+  },
+  brightText: {
+    color: "black",
+  },
 });
