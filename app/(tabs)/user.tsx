@@ -53,7 +53,9 @@ export default function HomeScreen() {
           if (response.status == 200) {
             Alert.alert("로그인 성공");
             setUserId(response.data.data.id);
-            setStId(response.data.data.stId)
+            setStId(response.data.data.stId);
+            setId('');
+            setPw('');
           }
         })
         .catch((err) => {
@@ -76,7 +78,7 @@ export default function HomeScreen() {
       {storedStId == null ? (
         <ThemedView style={styles.container}>
           <ThemedText style={styles.title}>로그인하기</ThemedText>
-          <KeyboardAwareScrollView>
+          <KeyboardAwareScrollView style={{width:'100%'}}>
             <TextInput
               onChangeText={changeId}
               value={id}
@@ -137,15 +139,16 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 50,
-    width: 300,
+    width: '93%',
     borderColor: "gray",
     borderWidth: 1,
     paddingHorizontal: 8,
     borderRadius: 10,
     marginBottom: 20,
+    alignSelf:'center'
   },
   button: {
-    width: 300,
+    width: '93%',
     height: 50,
     backgroundColor: "rgb(10,200,400)",
     borderRadius: 10,
@@ -156,7 +159,7 @@ const styles = StyleSheet.create({
     bottom: 10,
   },
   disabledBtn: {
-    width: 300,
+    width: '93%',
     height: 50,
     backgroundColor: "rgb(10,150,255)",
     borderRadius: 10,

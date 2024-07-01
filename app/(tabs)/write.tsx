@@ -83,7 +83,7 @@ const HomeScreen = () => {
     <Pressable style={{ flex: 1 }} onPress={() => Keyboard.dismiss()}>
       <ThemedView style={styles.container}>
         <ThemedText style={styles.title}>글작성 페이지</ThemedText>
-        <KeyboardAwareScrollView style={{ minHeight: "100%" }}>
+        <KeyboardAwareScrollView style={{ minHeight: "100%",width:'100%' }}>
           <TextInput
             style={[
               styles.input,
@@ -149,12 +149,13 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 50,
-    width: 300,
+    width: '93%',
     borderColor: "gray",
     borderWidth: 1,
     paddingHorizontal: 8,
     borderRadius: 10,
     marginBottom: 20,
+    alignSelf:'center'
   },
   darkText: {
     color: "white",
@@ -163,7 +164,7 @@ const styles = StyleSheet.create({
     color: "black",
   },
   button: {
-    width: 300,
+    width: '93%',
     height: 50,
     backgroundColor: "rgb(10,200,400)",
     borderRadius: 10,
