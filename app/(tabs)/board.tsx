@@ -46,8 +46,7 @@ export default function HomeScreen() {
         setPosts(response.data.data);
         setRefreshing(false);
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {
         setRefreshing(false);
       });
   }, []);

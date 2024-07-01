@@ -10,6 +10,7 @@ import {
   Pressable,
   Alert,
   useColorScheme,
+  Image,
 } from "react-native";
 import * as Crypto from "expo-crypto";
 import { ThemedText } from "@/components/ThemedText";
@@ -59,7 +60,6 @@ export default function HomeScreen() {
           }
         })
         .catch((err) => {
-          console.log(err);
           if (err.response.status == 401) {
             Alert.alert("비밀번호가 틀립니다.");
           }
@@ -78,7 +78,7 @@ export default function HomeScreen() {
       {storedStId == null ? (
         <ThemedView style={styles.container}>
           <ThemedText style={styles.title}>로그인하기</ThemedText>
-          <KeyboardAwareScrollView style={{width:'100%'}}>
+          <KeyboardAwareScrollView style={{ width: "100%" }}>
             <TextInput
               onChangeText={changeId}
               value={id}
@@ -116,6 +116,7 @@ export default function HomeScreen() {
       ) : (
         <ThemedView style={styles.container}>
           <ThemedText style={styles.title}>마이페이지</ThemedText>
+          <Image source={require("../../assets/images/icon.png")} style={{resizeMode:"contain",width:200,height:200}}/>
           <ThemedText style={styles.userIdText}>
             나의 학번: {storedStId}
           </ThemedText>

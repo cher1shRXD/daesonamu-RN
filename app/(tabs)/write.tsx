@@ -68,7 +68,6 @@ const HomeScreen = () => {
           }
         })
         .catch((err) => {
-          console.log(err);
           Alert.alert('에러',err.message)
         });
     } else {
