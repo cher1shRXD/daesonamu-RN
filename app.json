@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "react-native-app",
-    "slug": "react-native-app",
-    "version": "1.0.0",
+    "name": "대소나무숲",
+    "slug": "대소나무숲",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
@@ -13,14 +13,16 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "bundleIdentifier":"kro.kr.daesonamu",
+      "bundleIdentifier": "kr.kro.daesonamu",
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "buildType": "apk",
+      "package": "kr.kro.daesonamu"
     },
     "web": {
       "bundler": "metro",
@@ -32,6 +34,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "adce5424-52ed-4f90-8140-058656c82575"
+      }
+    },
+    "owner": "cher1shrxd"
   }
 }

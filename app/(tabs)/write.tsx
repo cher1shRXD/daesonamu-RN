@@ -68,7 +68,7 @@ const HomeScreen = () => {
           }
         })
         .catch((err) => {
-          Alert.alert('에러',err.message)
+          Alert.alert('로그인후 이용해 주세요.')
         });
     } else {
       Alert.alert("모든 입력창을 모두 입력해주세요.");
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
     bottom: 10,
   },
   disabledBtn: {
-    width: 300,
+    width: '93%',
     height: 50,
     backgroundColor: "rgb(10,150,255)",
     borderRadius: 10,
