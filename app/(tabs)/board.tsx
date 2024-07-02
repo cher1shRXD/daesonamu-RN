@@ -1,13 +1,16 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import axios from "axios";
-import React, { useEffect, useState, useCallback, useRef } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
+import RenderHTML from "react-native-render-html";
 import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
   RefreshControl,
   Alert,
+  Dimensions,
+  useColorScheme,
 } from "react-native";
 
 interface Post {
@@ -18,14 +21,34 @@ interface Post {
   createdAt: string;
 }
 
+const lightTheme = {
+  color: "#000000",
+};
+
+const darkTheme = {
+  color: "#ffffff",
+};
+
 export default function HomeScreen() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [detailPost, setDetailPost] = useState<Post>();
   const [refreshing, setRefreshing] = useState(false);
   const [pageState, setPageState] = useState(false);
 
+  const themeColor = useColorScheme();
+  const contentWidth = Dimensions.get("window").width - 20;
 
-  const updateDetailPost = (postId: number) => {
+  const tagsStyles = useMemo(
+    () => ({
+      body: {
+        color: themeColor === "dark" ? darkTheme.color : lightTheme.color,
+        font: 16
+      },
+    }),
+    [themeColor]
+  );
+
+  const updateDetailPost = (postId: number = 0) => {
     axios
       .get(`https://daesonamu.kro.kr/api/board/${postId}`)
       .then((response) => {
@@ -36,7 +59,6 @@ export default function HomeScreen() {
         Alert.alert("에러", err.message);
       });
   };
-
 
   const getPost = useCallback(() => {
     setRefreshing(true);
@@ -70,11 +92,11 @@ export default function HomeScreen() {
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
           >
-            {posts.map((items) => (
+            {posts.map((item) => (
               <TouchableOpacity
-                key={items.id}
+                key={item.id}
                 onPress={() => {
-                  updateDetailPost(items.id);
+                  updateDetailPost(item.id);
                 }}
               >
                 <ThemedView
@@ -83,15 +105,18 @@ export default function HomeScreen() {
                   lightColor="#F9F9F9"
                 >
                   <ThemedText style={styles.contentTitle}>
-                    {items.title}
+                    {item.title}
                   </ThemedText>
                   <ThemedText style={styles.contentText}>
-                    작성자: {items.author}
+                    작성자:{" "}
+                    {item.author.length > 10
+                      ? item.author.substring(0, 10) + "....."
+                      : item.author}
                   </ThemedText>
                   <ThemedText
                     style={[styles.contentText, { textAlign: "right" }]}
                   >
-                    {items.createdAt.split("T")[0]}
+                    {item.createdAt.split("T")[0]}
                   </ThemedText>
                 </ThemedView>
               </TouchableOpacity>
@@ -114,11 +139,18 @@ export default function HomeScreen() {
                 {detailPost.title}
               </ThemedText>
               <ThemedText style={styles.postInfo}>
-                작성자: {detailPost.author} -{" "}
+                작성자:{" "}
+                {detailPost.author.length > 10
+                  ? detailPost.author.substring(0, 10) + "..."
+                  : detailPost.author}{" "}
                 {detailPost.createdAt.split("T")[0]}
               </ThemedText>
               <ThemedText style={styles.postContent}>
-                {detailPost.content.replaceAll("<br>", "\n")}
+                <RenderHTML
+                  contentWidth={contentWidth}
+                  source={{ html: detailPost?.content || "" }}
+                  tagsStyles={tagsStyles}
+                />
               </ThemedText>
             </>
           )}
